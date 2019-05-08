@@ -1,0 +1,8 @@
+{
+  "name": "size-of",
+  "version": "0.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/ganobrega/size-of.git",
+  "author": "gazevedo <gazevedo@igcorp.com.br>",
+  "license": "MIT"
+}
