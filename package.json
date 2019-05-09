@@ -1,6 +1,6 @@
 {
 	"name": "sizof",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"main": "index.js",
 	"repository": "https://github.com/ganobrega/sizof.git",
 	"license": "MIT",
