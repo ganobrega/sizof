@@ -4,7 +4,7 @@
 
 Accepts paths and [glob patterns](https://github.com/sindresorhus/globby#globbing-patterns).
 
-![sizof animation](screenshot.gif)
+![sizof animation](https://user-images.githubusercontent.com/4602864/57462160-b6b76a80-724e-11e9-8980-43ee77eada3f.gif)
 
 ## Install
 
