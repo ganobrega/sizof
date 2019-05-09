@@ -4,7 +4,9 @@
 	"main": "index.js",
 	"repository": "https://github.com/ganobrega/sizof.git",
 	"license": "MIT",
-	"bin": "./cli.js",
+	"bin": {
+		"sizof": "cli.js"
+	},
 	"author": {
 		"name": "Gabriel Nobrega",
 		"email": "gnobrega.contato@gmail.com",
