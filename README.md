@@ -1,6 +1,6 @@
 # Sizof
 
-> Get size of file and folders
+> Check the size of files and folders from the CLI
 
 Accepts paths and [glob patterns](https://github.com/sindresorhus/globby#globbing-patterns).
 
