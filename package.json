@@ -2,7 +2,10 @@
 	"name": "sizof",
 	"version": "1.0.3",
 	"main": "index.js",
-	"repository": "https://github.com/ganobrega/sizof.git",
+	"repository": {
+		"type": "git",
+  		"url": "https://github.com/ganobrega/sizof"
+	},
 	"license": "MIT",
 	"bin": {
 		"sizof": "cli.js"
