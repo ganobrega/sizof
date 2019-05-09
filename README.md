@@ -4,6 +4,7 @@
 
 Accepts paths and [glob patterns](https://github.com/sindresorhus/globby#globbing-patterns).
 
+![sizof animation](sizof.gif)
 
 ## Install
 
@@ -40,7 +41,7 @@ Add script in your `package.json` to check size of build folder.
 
 ```
 "scripts": {
-  "size": "sizof build/*"
+  "size": "sizof dist/*.min.*"
 }
 ```
 
