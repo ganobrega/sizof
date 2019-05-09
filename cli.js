@@ -1,23 +1,23 @@
 #!/usr/bin/env node
 'use strict';
-const meow = require('meow');
-const updateNotifier = require('update-notifier');
-const fs = require("fs");
-const path = require("path");
-const filesize = require('filesize');
-const logUpdate = require('log-update');
-const globby = require("globby");
 const chalk = require("chalk");
-const isPathInside = require('is-path-inside');
 const columnify = require('columnify');
+const filesize = require('filesize');
+const fs = require("fs");
+const globby = require("globby");
+const isPathInside = require('is-path-inside');
+const logUpdate = require('log-update');
+const meow = require('meow');
+const path = require("path");
+const updateNotifier = require('update-notifier');
 
 const cli = meow(`
 	Usage
 	  $ sizof <path|glob> […]
 
 	Examples
-	  $ sizof unicorn.png rainbow.png
-	  $ sizof '*.png' '!unicorn.png'
+	  $ sizof bundler.js
+	  $ sizof '*.js' '!*.min.js'
 
 	Options
 	  --json -j     Output the result as JSON
@@ -37,11 +37,6 @@ if (cli.input.length === 0) {
 }
 
 let paths = cli.input;
-
-const options = {
-	base: 10,
-	standard: "iec",
-};
 
 paths = (typeof paths === 'string' ? [paths] : paths).map(String);
 
