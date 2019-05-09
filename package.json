@@ -1,8 +1,41 @@
 {
-  "name": "sizof",
-  "version": "0.0.0",
-  "main": "index.js",
-  "repository": "https://github.com/ganobrega/sizof.git",
-  "author": "gazevedo <gazevedo@igcorp.com.br>",
-  "license": "MIT"
+	"name": "sizof",
+	"version": "0.0.0",
+	"main": "index.js",
+	"repository": "https://github.com/ganobrega/sizof.git",
+	"license": "MIT",
+	"bin": "./cli.js",
+	"author": {
+		"name": "Gabriel Nobrega",
+		"email": "gnobrega.contato@gmail.com",
+		"url": "https://github.com/ganobrega"
+	},
+	"engines": {
+		"node": ">=8"
+	},
+	"files": [
+		"cli.js"
+	],
+	"keywords": [
+		"cli-app",
+		"cli",
+		"size",
+		"file",
+		"sizeof",
+		"size-of",
+		"dir",
+		"measure",
+		"check"
+	],
+	"dependencies": {
+		"chalk": "^2.3.0",
+		"columnify": "^1.5.4",
+		"filesize": "^1.2.4",
+		"globby": "^9.2.0",
+		"log-update": "^2.3.0",
+		"meow": "^5.0.0",
+		"update-notifier": "^2.3.0"
+	},
+	"devDependencies": {
+	}
 }
