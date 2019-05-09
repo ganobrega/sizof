@@ -27,6 +27,7 @@
 		"size",
 		"file",
 		"sizeof",
+		"sizof",
 		"size-of",
 		"dir",
 		"measure",
