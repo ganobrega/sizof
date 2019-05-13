@@ -1,17 +1,18 @@
 #!/usr/bin/env node
 'use strict';
-const chalk = require("chalk");
+const chalk = require('chalk');
 const columnify = require('columnify');
 const filesize = require('filesize');
-const fs = require("fs");
-const globby = require("globby");
-const isPathInside = require('is-path-inside');
-const logUpdate = require('log-update');
+const fs = require('fs');
+const globby = require('globby');
 const meow = require('meow');
-const path = require("path");
+const boxen = require('boxen');
+const path = require('path');
+const error = require('debug')('Error');
 const updateNotifier = require('update-notifier');
 
-const cli = meow(`
+const cli = meow(
+	`
 	Usage
 	  $ sizof <path|glob> […]
 
@@ -20,17 +21,46 @@ const cli = meow(`
 	  $ sizof '*.js' '!*.min.js'
 
 	Options
-	  --json -j     Output the result as JSON
-`, {
-	flags: {
-		json: {
-			type: 'boolean',
-			alias: 'j'
+	  --json -j        Output the result as JSON
+	  --in-zip -i      Output the result if compressed to zip
+`,
+	{
+		flags: {
+			json: {
+				type: 'boolean',
+				alias: 'j',
+			},
 		},
 	}
-});
+);
 
-updateNotifier({pkg: cli.pkg}).notify();
+const configs = {
+	columnify: {
+		headers: ['name', 'length'],
+		columns: ['name', 'length'],
+		showHeaders: false,
+		truncate: true,
+		config: {
+			path: {
+				showHeaders: false,
+			},
+			name: {
+				minWidth: 20,
+			},
+			length: {
+				align: 'right',
+				dataTransform: function(value) {
+					return chalk.cyan(value);
+				},
+			},
+		},
+	},
+	boxen: {
+		padding: 1,
+	},
+};
+
+updateNotifier({ pkg: cli.pkg }).notify();
 
 if (cli.input.length === 0) {
 	cli.showHelp();
@@ -43,73 +73,33 @@ paths = (typeof paths === 'string' ? [paths] : paths).map(String);
 paths = globby.sync(paths, {
 	expandDirectories: false,
 	nodir: false,
-	nonull: true
+	nonull: true,
 });
 
 paths = paths.map(filePath => path.resolve(filePath));
-
-paths = paths.filter(filePath => {
-	if (paths.some(otherPath => isPathInside(filePath, otherPath))) {
-		return false;
-	}
-
-	try {
-		return fs.lstatSync(filePath);
-	} catch (error) {
-		if (error.code === 'ENOENT') {
-			return false;
-		}
-
-		throw error;
-	}
-});
 
 if (paths.length === 0) {
 	return;
 }
 
-function render(data) {
-	logUpdate(columnify(data, {
-		headers: ['name', 'length'],
-		columns: ['name', 'length'],
-		showHeaders: false,
-		truncate: true,
-		config: {
-			path: {
-				showHeaders: false
-			},
-			name: {
-				minWidth: 20,
-				maxWidth: 30
-			},
-			length: {
-				align: 'right',
-				dataTransform: function(data) {
-					return chalk.cyan(data);
-				},
-			}
-		}
-	}));
-}
+let total = 0;
 
-const result = paths.reduce( (p, absolutePath) => {
+const data = paths.reduce((p, absolutePath) => {
 	try {
-		let name = path.basename(absolutePath);
+		let name = path.relative(process.cwd(), absolutePath);
 		let bytes = fs.lstatSync(absolutePath).size;
 		let length = filesize(bytes);
 
 		let obj = {
 			name,
+			path: absolutePath,
 			bytes,
 			length,
-			path: absolutePath,
 		};
 
 		p.push(obj);
 
-		if(!cli.flags.json){
-			render(p);
-		}
+		total += bytes;
 
 		return p;
 	} catch (error) {
@@ -117,11 +107,23 @@ const result = paths.reduce( (p, absolutePath) => {
 			return false;
 		}
 
-		console.error(error);
+		error(error);
 	}
-
 }, []);
 
-if(cli.flags.json){
-	console.log(JSON.stringify(result, null, 4));
+let footer = [
+	`Files found: ${data.length}`,
+	`Total size: ${filesize(total)}`,
+].join('\n');
+
+let output = [
+	columnify(data, configs.columnify),
+	'\n\n',
+	boxen(footer, configs.boxen),
+].join('');
+
+if (cli.flags.json) {
+	console.log(JSON.stringify(data, null, 4));
+} else {
+	console.log(output);
 }
