@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 'use strict';
 const chalk = require('chalk');
 const columnify = require('columnify');
@@ -112,7 +113,7 @@ const data = paths.reduce((p, absolutePath) => {
 }, []);
 
 let footer = [
-	`Files found: ${data.length}`,
+	`Founded: ${data.length}`,
 	`Total size: ${filesize(total)}`,
 ].join('\n');
 
