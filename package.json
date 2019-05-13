@@ -1,6 +1,6 @@
 {
 	"name": "sizof",
-	"version": "1.0.9",
+	"version": "1.0.10",
 	"main": "cli.js",
 	"description": "Check the size of files and folders from the CLI",
 	"repository": {
