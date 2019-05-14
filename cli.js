@@ -9,7 +9,6 @@ const globby = require('globby');
 const meow = require('meow');
 const boxen = require('boxen');
 const path = require('path');
-const error = require('debug')('Error');
 const updateNotifier = require('update-notifier');
 
 const cli = meow(
@@ -34,6 +33,12 @@ const cli = meow(
 		},
 	}
 );
+
+updateNotifier({ pkg: cli.pkg }).notify();
+
+if (cli.input.length === 0) {
+	cli.showHelp();
+}
 
 const configs = {
 	columnify: {
@@ -61,70 +66,68 @@ const configs = {
 	},
 };
 
-updateNotifier({ pkg: cli.pkg }).notify();
-
-if (cli.input.length === 0) {
-	cli.showHelp();
-}
-
 let paths = cli.input;
 
-paths = (typeof paths === 'string' ? [paths] : paths).map(String);
+(async () => {
+	paths = (typeof paths === 'string' ? [paths] : paths).map(String);
 
-paths = globby.sync(paths, {
-	expandDirectories: false,
-	nodir: false,
-	nonull: true,
-});
+	paths = globby.sync(paths, {
+		expandDirectories: false,
+		nodir: false,
+		nonull: true,
+	});
 
-paths = paths.map(filePath => path.resolve(filePath));
+	paths = paths.map(filePath => path.resolve(filePath));
 
-if (paths.length === 0) {
-	return;
-}
-
-let total = 0;
-
-const data = paths.reduce((p, absolutePath) => {
-	try {
-		let name = path.relative(process.cwd(), absolutePath);
-		let bytes = fs.lstatSync(absolutePath).size;
-		let length = filesize(bytes);
-
-		let obj = {
-			name,
-			path: absolutePath,
-			bytes,
-			length,
-		};
-
-		p.push(obj);
-
-		total += bytes;
-
-		return p;
-	} catch (error) {
-		if (error.code === 'ENOENT') {
-			return false;
-		}
-
-		error(error);
+	if (paths.length === 0) {
+		return;
 	}
-}, []);
 
-let footer = [
-	`Founded: ${data.length}`,
-	`Total size: ${filesize(total)}`,
-].join('\n');
+	let total = 0;
 
-let output = [
-	columnify(data, configs.columnify),
-	'\n\n',
-	boxen(footer, configs.boxen),
-].join('');
+	const data = paths.reduce((p, absolutePath, i) => {
+		try {
+			let name = path.relative(process.cwd(), absolutePath);
+			let bytes = fs.lstatSync(absolutePath).size;
+			let length = filesize(bytes);
 
-if (cli.flags.json) {
-	console.log(JSON.stringify(data, null, 4));
-} else {
-	console.log(output);
-}
+			let obj = {
+				name,
+				path: absolutePath,
+				bytes,
+				length,
+			};
+
+			p.push(obj);
+
+
+			total += bytes;
+
+			return p;
+		} catch (error) {
+			if (error.code === 'ENOENT') {
+				return false;
+			}
+
+			console.error(error);
+		}
+	}, []);
+
+	let footer = [
+		`Founded: ${data.length}`,
+		`Total size: ${filesize(total)}`,
+	].join('\n');
+
+	let output = [
+		columnify(data, configs.columnify),
+		'\n\n',
+		boxen(footer, configs.boxen),
+	].join('');
+
+	if (cli.flags.json) {
+		console.log(JSON.stringify(data, null, 4));
+	} else {
+		console.log(output);
+	}
+
+})();
