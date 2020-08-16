@@ -114,7 +114,7 @@ let paths = cli.input;
 	}, []);
 
 	let footer = [
-		`Founded: ${data.length}`,
+		`Found: ${data.length}`,
 		`Total size: ${filesize(total)}`,
 	].join('\n');
 
